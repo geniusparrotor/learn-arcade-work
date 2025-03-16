@@ -20,16 +20,21 @@ def main():
 
     # this code populates the room info
     room_list = []
-    names = ['secret room', 'bath room', 'start, living room', 'second living room', 'bed room']
-    descriptions = ['this is a secret room there is a dor north', 'ths is a bath room it has two dor`s one east and one south', 'here is were you start you have a house to explor there is a dor west and good luck', 'this is the living room there are three dor`s one north, one east and one south', 'this is the second living room there are two dor`s one west and one east', 'this a bedroom there is only one dor it is west '
-
+    names = ['secret room', 'bathroom', 'start room', 'living room', 'second living room', 'bedroom']
+    descriptions = [
+        'You found the secret room. You are the only person that has entered this room. You are the best!',
+        'This is a bathroom with 2 doors one east and one south.',
+        'This is the start room with one door west.',
+        'This is the living room with two doors, one north and one west.',
+        'This is the second living room with two doors one west and one east.',
+        'This a bedroom with only one west door.'
     ]
-    norths = [3, None, None, None,None,None]
+    norths = [3, None, None, None, None, None]
     easts = [None, 2, None, 4, 5, None]
-    souths = [None,3, None, None, None, None]
-    wests = [None, None, 1, None,3,4 ]
-    ups = [None,None, None, None,None,None]
-    downs = [None,None, None, None, None, None ]
+    souths = [None, 3, None, 0, None, None]
+    wests = [None, None, 1, None, 3, 4]
+    ups = [None, None, None, None, None, None]
+    downs = [None, None, None, None, None, None]
     for i in range(len(names)):
         room = Room(names[i], descriptions[i], norths[i], easts[i], souths[i], wests[i], ups[i], downs[i])
         room_list.append(room)
@@ -50,6 +55,24 @@ def main():
             if new_room is None:
                 print("Sorry, you can't go that way")
             else:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 current_room = new_room
         elif move == 'e':
             new_room = room_list[current_room].east

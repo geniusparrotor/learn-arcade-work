@@ -1,63 +1,39 @@
-"""
-Sprite Sample Program
-
-- This is an alternative evolution of the coin_collector_moving1 game
-- This time the coins bounce off the edges of the screen
-- This is handled by the Coin class update function, by using the same logic as was used for the
-  bouncing balls in a previous program
-- Note this time we use .left .right .top .bottom sprite attributes which saves us having to worry about object radius
-  for calculating when an object is touching the edge
-- In this program we don't respawn collected coins
-- As an extra feature we make the coins spin - it is handled the same way as x/y change rate
-"""
+""" Sprite Sample Program """
 
 import random
 import arcade
 
 # --- Constants ---
 SPRITE_SCALING_PLAYER = 0.5
-SPRITE_SCALING_COIN = 0.3
-COIN_COUNT = 1000
+SPRITE_SCALING_COIN = 0.2
+COIN_COUNT = 10000
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 
 class Coin(arcade.Sprite):
+    """
+    This class represents the coins on our screen. It is a child class of
+    the arcade library's "Sprite" class.
+    """
 
-    def __init__(self, filename, sprite_scaling):
+    def reset_pos(self):
 
-        super().__init__(filename, sprite_scaling)
+        # Reset the coin to a random spot above the screen
+        self.center_y = random.randrange(SCREEN_HEIGHT + 20,
+                                         SCREEN_HEIGHT + 100)
+        self.center_x = random.randrange(SCREEN_WIDTH)
 
-        self.change_x = 0
-        self.change_y = 0
-        self.spin_rate = 0
-
-    def on_update(self, delta_time: float = 1 / 60) -> None:
+    def update(self):
 
         # Move the coin
-        self.center_x += self.change_x
-        self.center_y += self.change_y
+        self.center_y -= 1
 
-        # If we are out-of-bounds, then 'bounce'
-        if self.left < 0:
-            self.change_x *= -1
-
-        if self.right > SCREEN_WIDTH:
-            self.change_x *= -1
-
-        if self.bottom < 0:
-            self.change_y *= -1
-
-        if self.top > SCREEN_HEIGHT:
-            self.change_y *= -1
-
-        # make the coin spin - the spin rate is determined when the coin is created in the window class
-        self.angle += self.spin_rate
-
-        # If we rotate past 360, reset it back a turn.
-        if self.angle > 359:
-            self.angle -= 360
+        # See if the coin has fallen off the bottom of the screen.
+        # If so, reset it.
+        if self.top < 0:
+            self.reset_pos()
 
 
 class MyGame(arcade.Window):
@@ -92,8 +68,8 @@ class MyGame(arcade.Window):
         self.score = 0
 
         # Set up the player
-        # Character image from builtins
-        self.player_sprite = arcade.Sprite(":resources:images/pinball/bumper.png", SPRITE_SCALING_PLAYER)
+        # Character image from kenney.nl
+        self.player_sprite = arcade.Sprite(":resources:images/animated_characters/male_person/malePerson_idle.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
@@ -108,16 +84,13 @@ class MyGame(arcade.Window):
             # Position the coin
             coin.center_x = random.randrange(SCREEN_WIDTH)
             coin.center_y = random.randrange(SCREEN_HEIGHT)
-            coin.change_x = random.randrange(-3, 4)
-            coin.change_y = random.randrange(-3, 4)
-            coin.spin_rate = random.randrange(-3, 4)
 
             # Add the coin to the lists
             self.coin_list.append(coin)
 
     def on_draw(self):
         """ Draw everything """
-        arcade.start_render()
+        self.clear()
         self.coin_list.draw()
         self.player_list.draw()
 
@@ -137,7 +110,7 @@ class MyGame(arcade.Window):
 
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
-        self.coin_list.on_update(delta_time)
+        self.coin_list.update()
 
         # Generate a list of all sprites that collided with the player.
         hit_list = arcade.check_for_collision_with_list(self.player_sprite,
@@ -145,7 +118,7 @@ class MyGame(arcade.Window):
 
         # Loop through each colliding sprite, remove it, and add to the score.
         for coin in hit_list:
-            coin.remove_from_sprite_lists()
+            coin.reset_pos()
             self.score += 1
 
 
